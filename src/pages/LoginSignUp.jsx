@@ -76,7 +76,7 @@ const LoginSignUpForm = () => {
         setisLoggedIn(true)
 
       }else{
-        const res=await axios.post('http://localhost:3000/signup',{
+      const res=await axios.post('/signup',{
             email,
             username,
             password
