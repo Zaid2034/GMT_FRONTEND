@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import images from '../assets/image39.png'
@@ -23,8 +24,8 @@ const SplashScreen = () => {
     },[isLoggedIn])
     
     return (
-        <div className='flex justify-center bg-black'>
-            <div className="relative flex items-end justify-center h-screen w-[375px] bg-black">
+        <div className='flex justify-center h-screen bg-black'>
+            <div className="relative flex items-end justify-center h-full w-[375px] bg-black">
                 <div className="absolute inset-0 z-0">
                     <img
                     src={count==1? images:images3}

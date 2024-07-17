@@ -96,8 +96,8 @@ const LoginSignUpForm = () => {
     password:string()
   });
   return (
-    <div className="flex items-center justify-center h-100vh bg-gray-200" >
-      <form className="w-[320px] sm:w-[375px] max-w-md h-[812px] px-6 py-4 bg-white shadow-md" onSubmit={handleSubmit}>
+    <div className="flex items-center justify-center bg-gray-200" >
+      <form className="w-[320px] sm:w-[375px] max-w-md min-h-screen px-6 py-4 bg-white shadow-md" onSubmit={handleSubmit}>
         <h4 className="mb-2 text-3xl font-semibold mt-8">{isLoginSignUp==='login'?"Login to your account":"Create your new account"}</h4>
         <p className="text-[#878787] font-medium text-sm">{isLoginSignUp === 'signup'? 'Create an account to start looking for the food you like': 'Please signin to your account'}</p>
         
