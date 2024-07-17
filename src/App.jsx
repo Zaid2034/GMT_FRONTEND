@@ -12,7 +12,8 @@ import axios from 'axios';
 
 function App() {
 axios.defaults.baseURL =
-  'https://vercel-testing-hcpetjro7-zaids-projects-e530d5c7.vercel.app';
+'https://vercel-testing-aaw7.vercel.app';
+
 
   return (
     <>

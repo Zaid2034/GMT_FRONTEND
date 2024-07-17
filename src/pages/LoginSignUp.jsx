@@ -68,7 +68,7 @@ const LoginSignUpForm = () => {
       const username=formData.username
       const password=formData.password
       if(isLoginSignUp==='login'){
-        const res=await axios.post('http://localhost:3000/signin',{
+        const res=await axios.post('/signin',{
             email,
             password
         })
