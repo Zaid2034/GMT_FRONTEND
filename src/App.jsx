@@ -12,8 +12,7 @@ import axios from 'axios';
 
 function App() {
 axios.defaults.baseURL =
-'https://vercel-testing-aaw7.vercel.app';
-
+'https://zaid-gmt-backend-4.vercel.app/';
 
   return (
     <>

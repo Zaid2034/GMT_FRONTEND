@@ -18,7 +18,6 @@ const AnalogClock = () => {
   const [hours,setHours]=useState(prevTime.getHours()*30)
   const [minute,setMinute]=useState(prevTime.getMinutes()*6)
   const [quotes,setQuotes]=useState('Good Morning')
-  const {setSharing}=useContext(UserContext)
 
   const [value, setValue] =useState(()=>{
     const params = new URLSearchParams(location.search);
@@ -43,13 +42,12 @@ const AnalogClock = () => {
 
 const handleShare = async() => {
     
-    const res=await axios.post('http://localhost:3000/storeToken',{
+    const res=await axios.post('/storeToken',{
       token:token
     })
     const newUrl = `${window.location.origin}${window.location.pathname}?sliderValue=${value}&token=${token}`;
     navigator.clipboard.writeText(newUrl).then(() => {
       alert('URL copied to clipboard!');
-      setSharing(true)
     });
   };
 

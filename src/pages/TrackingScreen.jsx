@@ -12,7 +12,7 @@ const TrackingScreen = () => {
   const params=new URLSearchParams (location.search);
   const slider=params.get('sliderValue')
   const token=params.get('token')
-  const res=axios.get('http://localhost:3000/getToken',{
+  const res=axios.get('/getToken',{
     headers: {
         'token': token
     }

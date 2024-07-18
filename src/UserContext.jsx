@@ -12,7 +12,7 @@ export function UserContextProvider({children}) {
   useEffect(()=>{
     if (token && token != 'LoggedInWithGoogle') {
         const res = axios
-          .get ('http://localhost:3000/success', {
+          .get ('/success', {
             headers: {
               Authorization: 'Bearer ' + localStorage.getItem ('token'),
             },
