@@ -2,7 +2,7 @@
 import React, { useState,useContext, useEffect } from "react";
 import Checkbox from '@mui/material/Checkbox';
 import { useNavigate } from "react-router-dom";
-import {object,string} from 'yup'
+import * as yup from 'yup'
 import { UserContext } from "../UserContext";
 import axios from "axios";
 import {useGoogleLogin} from '@react-oauth/google';
@@ -10,6 +10,8 @@ import {useGoogleLogin} from '@react-oauth/google';
 
 const LoginSignUpForm = () => {
   const navigate=useNavigate()
+  
+
   const {isLoggedIn,setisLoggedIn}=useContext(UserContext)
   useEffect(()=>{
     console.log("In use Effect")
@@ -50,51 +52,97 @@ const LoginSignUpForm = () => {
     username:'',
     password:''
   })
+
+  const userSignInSchema = yup.object ().shape ({
+    email: yup
+      .string ()
+      .email ('Invalid email format')
+      .required ('Email is required')
+      .max (50, 'Email must be at most 50 characters long')
+      .trim (),
+    password: yup
+      .string ()
+      .required ('Password is required')
+      .min (6, 'Password must be at least 6 characters long'),
+  });
+  const userSignUpSchema=yup.object().shape({
+      email: yup
+        .string ()
+        .email ('Invalid email format')
+        .required ('Email is required')
+        .max (50, 'Email must be at most 50 characters long')
+        .trim (),
+      username: yup
+        .string()
+        .required('Username is required')
+        .min(3, 'Username must be at least 3 characters long')
+        .max(30, 'Username must be at most 30 characters long')
+        .trim()
+        .lowercase('Username must be lowercase'),
+      password: yup
+        .string ()
+        .required ('Password is required')
+        .min (6, 'Password must be at least 6 characters long'),
+
+    })
+
   const handleChange=(e)=>{
     const {name,value}=e.target
     setFormData({
       ...formData,
       [name]:value
     })
-  }
-  const handleSubmit=async(e)=>{
-    console.log('In handleSubmit')
-    console.log(formData)
-    e.preventDefault()
-    const x=await userSchema.validate(formData)
-    console.log('x is:',x)
-    if(x){
-      const email=formData.email
-      const username=formData.username
-      const password=formData.password
-      if(isLoginSignUp==='login'){
-        const res=await axios.post('/signin',{
-            email,
-            password
-        })
-        localStorage.setItem("token", res.data.token)
-        setisLoggedIn(true)
-
-      }else{
-      const res=await axios.post('/signup',{
-            email,
-            username,
-            password
-        })
-        localStorage.setItem("token", res.data.token)
-        setisLoggedIn(true)
-      }
-      navigate ('/success');
-      setEmail(formData.email)
-    }
     
-    console.log(formData)
   }
-  let userSchema = object({
-    email: string().email(),
-    username:string(),
-    password:string()
-  });
+  const handleSubmit = async e => {
+    e.preventDefault ();
+    // Remove focus from the button
+
+    let schema;
+    if (isLoginSignUp === 'login') {
+      schema = userSignInSchema;
+    } else {
+      schema = userSignUpSchema;
+    }
+
+    try {
+      await schema.validate (formData, {abortEarly: false});
+      const email = formData.email;
+      const username = formData.username;
+      const password = formData.password;
+      let res;
+      if (isLoginSignUp === 'login') {
+        try{
+          res = await axios.post ('/signin', {email, password});
+        }catch(err){
+          alert(`${err} ${err.response.data.message}`)
+        }
+        
+      } else {
+          try{
+            res = await axios.post ('/signup', {email, username, password});
+          }catch(err){
+            alert (`${err} ${err.response.data.message}`);
+          }
+      }
+      localStorage.setItem ('token', res.data.token);
+      setisLoggedIn (true);
+      setEmail (formData.email);
+      navigate ('/success');
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        const validationErrors = {};
+        error.inner.forEach (err => {
+          validationErrors[err.path] = err.message;
+          alert(err.message)
+        });
+        
+      }
+    }
+};
+
+  
+
   return (
     <div className="flex items-center justify-center md:bg-gray-200" >
       <form className="w-[320px] sm:w-[375px] max-w-md min-h-screen px-6 py-4 bg-white md:shadow-md" onSubmit={handleSubmit}>

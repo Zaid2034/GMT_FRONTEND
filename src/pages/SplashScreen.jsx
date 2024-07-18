@@ -82,7 +82,7 @@ const SplashScreen = () => {
                         
                     </div>
 
-                    ):(<div className='flex justify-center items-center mb-4'>
+                    ):(<div className='flex justify-center items-center mb-4 cursor-pointer'>
                         <CircularProgress/>
                     </div>)}
                     

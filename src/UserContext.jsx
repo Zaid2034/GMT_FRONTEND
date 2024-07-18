@@ -11,7 +11,8 @@ export function UserContextProvider({children}) {
   const token = localStorage.getItem ('token');
   useEffect(()=>{
     if (token && token != 'LoggedInWithGoogle') {
-        const res = axios
+        try{
+          const res = axios
           .get ('/success', {
             headers: {
               Authorization: 'Bearer ' + localStorage.getItem ('token'),
@@ -20,9 +21,12 @@ export function UserContextProvider({children}) {
           .then (res => {
             if (res.data.message === 'OK') {
               setisLoggedIn (true);
-             
             }
           });
+        }catch(err){
+          alert (`${err} ${err.response.data.message}`);
+
+        }
       } else if (token === 'LoggedInWithGoogle') {
         console.log ('In if');
         setisLoggedIn (true);

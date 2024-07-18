@@ -41,14 +41,19 @@ const AnalogClock = () => {
   };
 
 const handleShare = async() => {
+
+    try{
+      const res=await axios.post('/storeToken',{
+        token:token
+      })
+      const newUrl = `${window.location.origin}${window.location.pathname}?sliderValue=${value}&token=${token}`;
+      navigator.clipboard.writeText(newUrl).then(() => {
+        alert('URL copied to clipboard!');
+      })
+    }catch(err){
+      alert (`${err} ${err.response.data.message}`);
+    }
     
-    const res=await axios.post('/storeToken',{
-      token:token
-    })
-    const newUrl = `${window.location.origin}${window.location.pathname}?sliderValue=${value}&token=${token}`;
-    navigator.clipboard.writeText(newUrl).then(() => {
-      alert('URL copied to clipboard!');
-    });
   };
 
   useEffect(()=>{
