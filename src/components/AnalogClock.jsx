@@ -1,35 +1,44 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { useContext, useEffect, useState } from "react";
+import {useEffect, useState} from 'react';
+
 import "./analogClock.css";
 import Slider from '@mui/material/Slider'
-import { useLocation } from 'react-router-dom';
-import axios from "axios";
-import { UserContext } from "../UserContext";
+import {useLocation, useNavigate} from 'react-router-dom';
+
+import axios from 'axios';
+
 import generateToken from "../GenerateToken";
 
 const AnalogClock = () => {
   const location = useLocation();
-  //const history = useHistory();
-  const [time, setTime] = useState(new Date());
-  const [isComplete,setIsComplete]=useState(false)
+  const navigate = useNavigate ();
+
   const [prevTime,setPrevTime]=useState(new Date())
   const [seconds,setSeconds]=useState(prevTime.getSeconds()*6)
   const [hours,setHours]=useState(prevTime.getHours()*30)
   const [minute,setMinute]=useState(prevTime.getMinutes()*6)
   const [quotes,setQuotes]=useState('Good Morning')
+  const currentHourDegree = prevTime.getHours () * 30;
+  const currentMinuteDegree = prevTime.getHours () * 6;
+  if (
+    Math.abs (currentHourDegree - hours) === 60 &&
+    Math.abs (currentMinuteDegree - minute) === 720
+  ) {
+    navigate ('/success');
+  }
+
 
   const [value, setValue] =useState(()=>{
-    const params = new URLSearchParams(location.search);
-    console.log("params is:",params.get('sliderValue'))
+  const params = new URLSearchParams (location.search);
     const x=Number (params.get ('sliderValue'));
     if(params.get('sliderValue') && x>=0 && x<=100){
       return x
     }else{
       return 50
     }
-    // return Number(params.get('sliderValue')) || 50;
   });
+
   const category = 'happiness';
   const apiKey = 'MTsbwwfhKsZ8VQV8Uj0kSw==HQYWAeSB6OfQYfzP';
   const token = generateToken (30);
@@ -39,8 +48,7 @@ const AnalogClock = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-const handleShare = async() => {
+  const handleShare = async() => {
 
     try{
       const res=await axios.post('/storeToken',{
@@ -57,9 +65,7 @@ const handleShare = async() => {
   };
 
   useEffect(()=>{
-    console.log("In use Effect")
     const intervalId = setInterval(() => {
-      console.log("In fetching data");
       axios.get(url, {
         headers: { 'X-Api-Key': apiKey },
       })
@@ -77,13 +83,11 @@ const handleShare = async() => {
   },[])
 
   useEffect(() => {
-    console.log("In useEffect")
-    console.log("value is:",value)
     const interval = setInterval(() => {
-      setTime(new Date());
       setSeconds((seconds) => seconds - 6);
     }, value*20);
-    return () => clearInterval(interval);
+    return () => clearInterval (interval);
+    
   }, [value]);
 
   useEffect(()=>{
@@ -99,11 +103,6 @@ const handleShare = async() => {
 
   return (
     <>
-      {isComplete===true ? (<>
-        <div>
-          Two hours completed!!
-        </div>
-      </>):(
         <div className="bg-primary min-h-screen text-center flex flex-col items-center">
          <div className="w-[95%] text-sm lg:w-[70%] md:h-[150px] md:text-lg text-white mb-6 pt-8  font-bold ">{quotes}</div>
           <div className="clock">
@@ -155,12 +154,8 @@ const handleShare = async() => {
                 },
               }}/>
       
-          <button onClick={handleShare} className="mb-1 py-4 px-8 bg-white hover:bg-primary-dark text-primary-dark hover:text-white font-medium rounded-3xl text-lg">Share</button>
+          <button onClick={handleShare} className="mb-1 py-4 px-8 bg-white text-primary-dark font-medium rounded-3xl text-lg">Share</button>
         </div>
-        
-      )}
-    
-
     </>
     
   );
@@ -168,5 +163,3 @@ const handleShare = async() => {
 
 export default AnalogClock;
 
-
-// mongodb+srv://zaid204:IITJEECENGAGE@96@cluster0.e9wcajl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

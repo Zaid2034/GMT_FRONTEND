@@ -2,27 +2,36 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import images from '../assets/image39.png'
-import images2 from '../assets/image 7.png'
 import images3 from '../assets/image 32.png'
 import { useContext, useState,useEffect } from 'react'
-import {Circle} from 'rc-progress'
 import { CircularProgress } from '../components/CircularProgress'
 import { UserContext } from '../UserContext'
 import { useNavigate } from 'react-router-dom'
+import {helix} from 'ldrs';
+
+helix.register ();
+
 
 const SplashScreen = () => {
     const [count,setCount]=useState(1)
-    const {isLoggedIn}=useContext(UserContext)
+    const {isLoggedIn, isLoading} = useContext (UserContext);
+
     const navigate=useNavigate()
     useEffect(()=>{
         if (isLoggedIn) {
             navigate ('/success');
         }
         return () => {
-            // Cleanup code here
         };
     },[isLoggedIn])
-    
+    if(isLoading){
+        console.log("Is loading is true")
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <l-helix size="45" speed="2.5" color="#FE8C00" />
+            </div>
+        )
+    }
     return (
         <div className='flex justify-center h-screen bg-black'>
             <div className="relative flex items-end justify-center h-full w-[375px] bg-black">

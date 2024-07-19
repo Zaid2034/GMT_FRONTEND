@@ -5,13 +5,14 @@ import axios from 'axios';
 export const UserContext = createContext ({});
 
 export function UserContextProvider({children}) {
-  const [email, setEmail] = useState (null);
   const [isLoggedIn,setisLoggedIn]=useState(false)
-  console.log('In user context Provider')
+  const [isLoading, setIsLoading] = useState (false);
   const token = localStorage.getItem ('token');
   useEffect(()=>{
+    console.log('In user context use Effect')
     if (token && token != 'LoggedInWithGoogle') {
         try{
+          setIsLoading (true);
           const res = axios
           .get ('/success', {
             headers: {
@@ -24,18 +25,21 @@ export function UserContextProvider({children}) {
             }
           });
         }catch(err){
+          setIsLoading(false)
           alert (`${err} ${err.response.data.message}`);
 
         }
       } else if (token === 'LoggedInWithGoogle') {
-        console.log ('In if');
+        setIsLoading(true)
         setisLoggedIn (true);
+      }else{
+        setIsLoading(false)
       }
     },[isLoggedIn])
 
   
   return (
-    <UserContext.Provider value={{email, setEmail,isLoggedIn,setisLoggedIn}}>
+    <UserContext.Provider value={{isLoggedIn,setisLoggedIn,isLoading,setIsLoading}}>
       {children}
     </UserContext.Provider>
   );

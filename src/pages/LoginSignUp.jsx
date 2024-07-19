@@ -6,53 +6,18 @@ import * as yup from 'yup'
 import { UserContext } from "../UserContext";
 import axios from "axios";
 import {useGoogleLogin} from '@react-oauth/google';
-
-
+import {helix} from 'ldrs';
+helix.register ();
 const LoginSignUpForm = () => {
   const navigate=useNavigate()
-  
-
-  const {isLoggedIn,setisLoggedIn}=useContext(UserContext)
-  useEffect(()=>{
-    console.log("In use Effect")
-    if(isLoggedIn){
-      navigate('/success')
-    }
-    return ()=>{
-
-    }
-  },[isLoggedIn])
-  const GoogleLogin = useGoogleLogin ({
-    onSuccess: async response => {
-      try {
-        // localStorage.removeItem('token')
-        const res = await axios.get (
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          {
-            headers: {
-              Authorization: `Bearer ${response.access_token}`,
-            },
-          }
-        );
-        console.log (res);
-        setisLoggedIn(true)
-        console.log("Above navigation")
-        localStorage.setItem('token','LoggedInWithGoogle')
-        navigate('/success')
-      } catch (err) {
-        console.log (err);
-      }
-    },
+  const [isLoginSignUp, setIsLoginSignUp] = useState ('login');
+  const {isLoggedIn, setisLoggedIn, isLoading, setIsLoading} = useContext(UserContext);
+  const [formData, setFormData] = useState ({
+    email: '',
+    username: '',
+    password: '',
   });
-
-  const [isLoginSignUp,setIsLoginSignUp]=useState('login')
-  const {setEmail} = useContext(UserContext);
-  const [formData,setFormData]=useState({
-    email:'',
-    username:'',
-    password:''
-  })
-
+  //Schema for form validation
   const userSignInSchema = yup.object ().shape ({
     email: yup
       .string ()
@@ -65,26 +30,58 @@ const LoginSignUpForm = () => {
       .required ('Password is required')
       .min (6, 'Password must be at least 6 characters long'),
   });
-  const userSignUpSchema=yup.object().shape({
-      email: yup
-        .string ()
-        .email ('Invalid email format')
-        .required ('Email is required')
-        .max (50, 'Email must be at most 50 characters long')
-        .trim (),
-      username: yup
-        .string()
-        .required('Username is required')
-        .min(3, 'Username must be at least 3 characters long')
-        .max(30, 'Username must be at most 30 characters long')
-        .trim()
-        .lowercase('Username must be lowercase'),
-      password: yup
-        .string ()
-        .required ('Password is required')
-        .min (6, 'Password must be at least 6 characters long'),
+  const userSignUpSchema = yup.object ().shape ({
+    email: yup
+      .string ()
+      .email ('Invalid email format')
+      .required ('Email is required')
+      .max (50, 'Email must be at most 50 characters long')
+      .trim (),
+    username: yup
+      .string ()
+      .required ('Username is required')
+      .min (3, 'Username must be at least 3 characters long')
+      .max (30, 'Username must be at most 30 characters long')
+      .trim ()
+      .lowercase ('Username must be lowercase'),
+    password: yup
+      .string ()
+      .required ('Password is required')
+      .min (6, 'Password must be at least 6 characters long'),
+  });
 
-    })
+
+  // If user is already logged in then navigate to success screen
+  useEffect(()=>{
+    if(isLoggedIn){
+      navigate('/success')
+    }
+    return ()=>{   
+    }
+  },[isLoggedIn])
+
+  //Google authentication
+  const GoogleLogin = useGoogleLogin ({
+    onSuccess: async response => {
+      try {
+        const res = await axios.get (
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          {
+            headers: {
+              Authorization: `Bearer ${response.access_token}`,
+            },
+          }
+        );
+        setisLoggedIn (true);
+        localStorage.setItem('token','LoggedInWithGoogle')
+        navigate('/success')
+      } catch (err) {
+        console.log (err);
+      }
+    },
+  });
+
+  
 
   const handleChange=(e)=>{
     const {name,value}=e.target
@@ -94,10 +91,10 @@ const LoginSignUpForm = () => {
     })
     
   }
+
+  //Form Submit
   const handleSubmit = async e => {
     e.preventDefault ();
-    // Remove focus from the button
-
     let schema;
     if (isLoginSignUp === 'login') {
       schema = userSignInSchema;
@@ -113,21 +110,25 @@ const LoginSignUpForm = () => {
       let res;
       if (isLoginSignUp === 'login') {
         try{
+          setIsLoading (true);
           res = await axios.post ('/signin', {email, password});
+          setIsLoading (false);
         }catch(err){
+          setIsLoading (false);
           alert(`${err} ${err.response.data.message}`)
         }
-        
       } else {
           try{
+            setIsLoading (true);
             res = await axios.post ('/signup', {email, username, password});
+            setIsLoading (false);
           }catch(err){
+            setIsLoading (false);
             alert (`${err} ${err.response.data.message}`);
           }
       }
       localStorage.setItem ('token', res.data.token);
       setisLoggedIn (true);
-      setEmail (formData.email);
       navigate ('/success');
     } catch (error) {
       if (error instanceof yup.ValidationError) {
@@ -136,15 +137,18 @@ const LoginSignUpForm = () => {
           validationErrors[err.path] = err.message;
           alert(err.message)
         });
-        
       }
     }
 };
-
-  
-
   return (
+
     <div className="flex items-center justify-center md:bg-gray-200" >
+    {isLoading ? (
+      <div className="min-h-screen flex items-center justify-center">
+        <l-helix size="45" speed="2.5" color="#FE8C00" />
+      </div>
+      
+    ):(
       <form className="w-[320px] sm:w-[375px] max-w-md min-h-screen px-6 py-4 bg-white md:shadow-md" onSubmit={handleSubmit}>
         <h4 className="mb-2 text-3xl font-semibold mt-8">{isLoginSignUp==='login'?"Login to your account":"Create your new account"}</h4>
         <p className="text-[#878787] font-medium text-sm">{isLoginSignUp === 'signup'? 'Create an account to start looking for the food you like': 'Please signin to your account'}</p>
@@ -226,14 +230,14 @@ const LoginSignUpForm = () => {
         
         <button 
           type="submit" 
-          className="w-full h-[52px] mb-4 text-white bg-primary hover:bg-primary-dark rounded-full text-sm font-semibold"
+          className="w-full h-[52px] mb-4 text-white bg-primary rounded-full text-sm font-semibold"
         >
           {isLoginSignUp==='signup'?"Register":"Sign In"}
         </button>
 
         <div className="flex items-center mb-4 w-full mt-2">
             <div className="border-t-2 w-[30%]"></div>
-            <div className="text-center text-[#878787] w-[30%] font-medium text-sm mx-[5%]">Or sign in with</div>
+            <div className="text-xs text-center text-[#878787] w-[30%] font-medium md:text-sm mx-[5%]">Or sign in with</div>
             <div className="border-t-2 w-[30%]"></div>
         </div>
 
@@ -285,6 +289,9 @@ const LoginSignUpForm = () => {
         
          
       </form>
+
+    )}
+      
     </div>
   );
 };

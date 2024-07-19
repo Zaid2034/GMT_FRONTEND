@@ -1,13 +1,11 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
-import React, { Fragment, useContext, useEffect } from 'react'
+import React, {useContext, useEffect } from 'react'
 import images from '../assets/image39.png'
-import { Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../UserContext'
 
 const SuccessLogin = () => {
-    console.log('In Success Screen')
     const navigate=useNavigate()
     const {isLoggedIn,setisLoggedIn}=useContext(UserContext)
     useEffect(()=>{
@@ -15,25 +13,24 @@ const SuccessLogin = () => {
             navigate('/register')
         }
         return () => {
-            // Cleanup code here
         };
     },[isLoggedIn])
     return(
         <div>
             <div className='flex justify-center  bg-black h-screen'>
-                    <div className='relative w-[375px]'>
-                        <div className='absolute inset-0 z-0'>
-                            <img
-                                src={images}
-                                alt="Delicious Burger"
-                                className="w-full h-full object-cover"
-                                />
+                <div className='relative w-[375px]'>
+                    <div className='absolute inset-0 z-0'>
+                        <img
+                            src={images}
+                            alt="Delicious Burger"
+                            className="w-full h-full object-cover"
+                            />
+                    </div>
+                    <div className='bg-white h-[60%] absolute z-10 w-full bottom-0 rounded-t-3xl flex flex-col justify-center items-center gap-y-8 pt-0 pb-6 pl-6 pr-6'>
+                        <div className='flex w-[full] justify-center items-center'>
+                            <div className='w-[58.13px] h-[4px] bg-primary-slide rounded-[11px] mt-[10px]'></div>
                         </div>
-                        <div className='bg-white h-[60%] absolute z-10 w-full bottom-0 rounded-t-3xl flex flex-col justify-center items-center gap-y-8 pt-0 pb-6 pl-6 pr-6'>
-                            <div className='flex w-[full] justify-center items-center'>
-                                <div className='w-[58.13px] h-[4px] bg-primary-slide rounded-[11px] mt-[10px]'></div>
-                            </div>
-                            <svg
+                        <svg
                                 width="207"
                                 height="168"
                                 viewBox="0 0 207 168"
@@ -90,34 +87,32 @@ const SuccessLogin = () => {
                                     d="M116.069 93.88C116.629 93.3251 117.385 93.0128 118.173 93.0106C118.961 93.0085 119.719 93.3166 120.281 93.8684C120.844 94.4202 121.167 95.1714 121.181 95.9595C121.194 96.7476 120.897 97.5093 120.353 98.08L104.385 118.04C104.111 118.336 103.78 118.573 103.411 118.737C103.043 118.902 102.646 118.991 102.242 118.998C101.839 119.006 101.438 118.932 101.064 118.781C100.69 118.63 100.35 118.405 100.065 118.12L89.4852 107.536C89.1905 107.261 88.9541 106.93 88.7901 106.562C88.6261 106.194 88.538 105.797 88.5309 105.394C88.5238 104.991 88.5979 104.591 88.7487 104.218C88.8996 103.844 89.1242 103.505 89.4091 103.22C89.694 102.935 90.0333 102.71 90.4068 102.56C90.7804 102.409 91.1805 102.335 91.5833 102.342C91.9861 102.349 92.3834 102.437 92.7514 102.601C93.1194 102.765 93.4506 103.001 93.7252 103.296L102.101 111.668L115.993 93.968C116.018 93.937 116.045 93.9076 116.073 93.88H116.069Z"
                                     fill="#FE8C00"
                                 />
-                            </svg>
-                            <h5 className='w-[full] font-semibold text-center text-2xl'>
-                                Login Successful
-                            </h5>
-                            <button
-                                className="w-[95.4%] h-[52px] text-white bg-primary rounded hover:bg-primary-dark rounded-full text-sm font-semibold"
-                                onClick={()=>{navigate('/tracking')}}
-                                >
-                                Go to Tracking Screen
-                            </button>
-                            <button
-                                style={{
-                                    fontWeight: 500,
-                                    fontSize: '14px',
-                                    color:'#878787' 
-                                }}
-                                onClick={()=>{
-                                    localStorage.removeItem('token')
-                                    setisLoggedIn(false)
-                                    navigate('/register')
-
-                                }}
+                        </svg>
+                        <h5 className='w-[full] font-semibold text-center text-2xl'>
+                            Login Successful
+                        </h5>
+                        <button
+                            className="w-[95.4%] h-[52px] text-white bg-primary rounded hover:bg-primary-dark rounded-full text-sm font-semibold"
+                            onClick={()=>{navigate('/tracking')}}
                             >
-                                Logout
-                            </button>
-
-                        </div>
+                            Go to Tracking Screen
+                        </button>
+                        <button
+                            style={{
+                            fontWeight: 500,
+                            fontSize: '14px',
+                            color:'#878787' 
+                            }}
+                            onClick={()=>{
+                                localStorage.removeItem('token')
+                                setisLoggedIn(false)
+                                navigate('/register')
+                            }}
+                            >
+                            Logout
+                        </button>
                     </div>
+                </div>
             </div>
         </div>
     )

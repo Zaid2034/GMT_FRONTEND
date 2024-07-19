@@ -21,7 +21,6 @@ const TrackingScreen =() => {
       },
     })
     .then (res => {
-      console.log ('message:', res.data.message);
       if (res.data.message == 'OK') {
         setIsSharable (true);
       }
@@ -31,9 +30,7 @@ const TrackingScreen =() => {
   }
   
   useEffect(()=>{
-    console.log("In tracking useEffect")
     if(!isLoggedIn && slider==null && token==null){
-      console.log("In tracking if")
       navigate('/register')
     }
     return ()=>{
